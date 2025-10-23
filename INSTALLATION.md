@@ -54,17 +54,17 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 
 ## Download Pre-Trained Models
 
-### Option 1: Automatic Download
+### Option 1: Automatic
 
 ```bash
 python download_models.py
 ```
 
-This will download all 8 pre-trained classifiers (~2GB total).
+Downloads all 8 classifiers (~2GB).
 
-### Option 2: Manual Download
+### Option 2: Manual
 
-Download models from [releases page](https://github.com/green8-dot/arxiv-multilabel-classification/releases) and place in `models/` directory:
+Download from [releases page](https://github.com/green8-dot/arxiv-multilabel-classification/releases) and place in `models/`:
 
 ```
 models/
@@ -78,9 +78,9 @@ models/
 └── cs_se_classifier.pt
 ```
 
-## Neo4j Setup (Optional - for Graph Features)
+## Neo4j Setup (Optional)
 
-The system can run without Neo4j, but graph features improve accuracy by 5-8pp.
+System works without Neo4j. Graph features add 5-8pp accuracy improvement.
 
 ### Install Neo4j
 
@@ -157,13 +157,13 @@ venv\Scripts\activate     # Windows
 
 ## Environment Variables
 
-Optional environment variables for advanced configuration:
+Optional configuration:
 
 ```bash
-export ARXIV_DATA_PATH="/path/to/data"           # Custom data directory
-export ARXIV_MODEL_PATH="/path/to/models"        # Custom model directory
-export ARXIV_CACHE_DIR="/path/to/cache"          # Cache directory
-export ARXIV_LOG_LEVEL="INFO"                    # Logging level (DEBUG, INFO, WARNING)
+export ARXIV_DATA_PATH="/path/to/data"       # Custom data directory
+export ARXIV_MODEL_PATH="/path/to/models"    # Custom model directory
+export ARXIV_CACHE_DIR="/path/to/cache"      # Cache directory
+export ARXIV_LOG_LEVEL="INFO"                # Logging level
 ```
 
 ## Testing Installation

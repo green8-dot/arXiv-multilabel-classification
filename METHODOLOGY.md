@@ -1,35 +1,35 @@
 # Methodology: Model-Corrected Labels
 
-## The Problem with Raw arXiv Labels
+## Problem
 
-arXiv categories are **author-declared**, not peer-reviewed. Our analysis found:
-- **3.5% mislabeling rate** across CS categories
-- Authors choose categories at submission time without validation
-- Multi-label assignments often incomplete or incorrect
+arXiv categories are author-declared, not peer-reviewed. Analysis shows:
+- 3.5% mislabeling rate across CS categories
+- Authors choose categories at submission without validation
+- Multi-label assignments often incomplete
 
-**Example mislabeling:**
+**Example:**
 ```
 Paper: "Deep Learning for Database Query Optimization"
 Author label: cs.DB only
-Correct labels: cs.DB + cs.LG (uses deep learning)
+Correct labels: cs.DB + cs.LG
 ```
 
-## Our Innovation: Model-Corrected Labels
+## Solution: Model-Corrected Labels
 
-Instead of training on noisy author labels, we use a two-stage process:
+Two-stage process:
 
-### Stage 1: High-Quality Seed Model
+### Stage 1: Seed Model
 
-Train initial classifier on **manually validated subset**:
+Train on manually validated subset:
 - 1,000 papers per category (8,000 total)
-- Manual verification by domain experts
-- Conservative labeling (high precision)
+- Manual verification
+- Conservative labeling
 
-**Result:** 92% F1 seed model on clean data
+Result: 92% F1 on clean data
 
-### Stage 2: Label Correction at Scale
+### Stage 2: Label Correction
 
-Use seed model to **correct** training labels for full dataset:
+Use seed model to correct training labels:
 
 ```python
 # Pseudo-code
@@ -47,45 +47,38 @@ for paper in training_set:
     paper.corrected_labels = corrected_labels
 ```
 
-**Merging strategy:**
-- Keep all author-declared labels (respect author intent)
-- Add high-confidence model predictions (threshold > 0.8)
-- Remove low-confidence author labels (if model strongly disagrees)
+Merging strategy:
+- Keep author-declared labels
+- Add high-confidence predictions (threshold > 0.8)
+- Remove low-confidence labels (strong model disagreement)
 
-### Stage 3: Retrain on Corrected Labels
+### Stage 3: Retrain
 
 Train final classifier on corrected dataset:
-- 31,128 papers with improved labels
-- GraphSAGE + citation network features
+- 31,128 papers with corrected labels
+- GraphSAGE + citation network
 - SciBERT embeddings
 
-**Result:** 94.26% F1 (15-25pp improvement over baseline)
+Result: 94.26% F1 (15-25pp improvement)
 
-## Why This Works
+## Why It Works
 
-### 1. Leverages Human Knowledge
-- Respects author expertise (keeps declared labels)
-- Adds systematic improvements (model corrections)
+1. Uses human knowledge (respects author labels)
+2. Adds systematic corrections (model improves labels)
+3. Scales: manual validation on 1K papers, automated correction on 31K
+4. Iterative: better labels create better models
 
-### 2. Scalable Quality Improvement
-- Manual validation: 1,000 papers (feasible)
-- Automated correction: 31,128 papers (scalable)
+## Validation
 
-### 3. Compound Learning Effect
-- Better labels -> better model -> better labels
-- Can iterate for further improvement
-
-## Experimental Validation
-
-We validated effectiveness by comparing:
+Comparison:
 
 | Approach | Average F1 | Training Data |
 |----------|-----------|---------------|
-| Baseline (raw labels) | 75.3% | Author-declared categories |
-| Manual-only | 92.1% | 8,000 manually validated papers |
-| Model-corrected | **94.26%** | 31,128 corrected papers |
+| Baseline (raw labels) | 75.3% | Author-declared |
+| Manual-only | 92.1% | 8K validated papers |
+| Model-corrected | 94.26% | 31K corrected papers |
 
-**Key finding:** Model-corrected labels on large dataset outperforms small manually-curated dataset.
+Model-corrected labels on large dataset outperforms small manual dataset.
 
 ## Label Correction Examples
 
@@ -99,7 +92,7 @@ Model prediction: [cs.SE: 0.95, cs.CL: 0.87, cs.AI: 0.82]
 Corrected labels: [cs.SE, cs.CL, cs.AI]
 ```
 
-**Why:** Paper uses NLP (cs.CL) and transformers (cs.AI) for software engineering task
+Reason: Paper uses NLP (cs.CL) and transformers (cs.AI) for software task
 
 ### Example 2: Category Refinement
 
@@ -111,7 +104,7 @@ Model prediction: [cs.LG: 0.91, cs.DC: 0.88, cs.AI: 0.45]
 Corrected labels: [cs.LG, cs.DC]
 ```
 
-**Why:** Paper is about ML systems (cs.LG) not general AI (cs.AI)
+Reason: ML systems (cs.LG), not general AI (cs.AI)
 
 ### Example 3: Respect Author Intent
 
@@ -123,7 +116,7 @@ Model prediction: [cs.DB: 0.93, cs.LG: 0.62, cs.AI: 0.81]
 Corrected labels: [cs.DB, cs.LG, cs.AI]
 ```
 
-**Why:** Keep author labels (cs.LG despite lower confidence), add cs.AI
+Reason: Keep author labels (cs.LG despite lower confidence), add cs.AI
 
 ## Implementation Details
 
@@ -137,7 +130,7 @@ def calibrate_prediction(logits, temperature=1.5):
     return sigmoid(logits / temperature)
 ```
 
-**Effect:** Prevents over-confident predictions from overwhelming author labels
+Prevents over-confident predictions from overwhelming author labels.
 
 ### Disagreement Resolution
 
@@ -168,29 +161,29 @@ Full correction pipeline available at:
 
 ## Generalizability
 
-This technique is applicable to any multi-label classification with:
-1. Noisy crowd-sourced labels (e.g., Stack Overflow tags)
-2. Author-declared categories (e.g., research papers, patents)
-3. User-generated content (e.g., social media hashtags)
+Applicable to:
+1. Noisy crowd-sourced labels (Stack Overflow tags)
+2. Author-declared categories (research papers, patents)
+3. User-generated content (social media hashtags)
 
-**Requirements:**
-- Ability to manually validate small seed set (500-1000 samples)
-- Moderate labeling noise (3-10% error rate)
-- Multi-label structure (harder for single-label problems)
+Requirements:
+- Manual validation of seed set (500-1000 samples)
+- Moderate noise (3-10% error rate)
+- Multi-label structure
 
 ## Limitations
 
-1. **Requires seed data:** Need clean subset for initial model
-2. **Computational cost:** Two-stage training process
-3. **Risk of bias amplification:** Model biases can propagate to corrected labels
-4. **Domain expertise needed:** Manual validation requires subject matter experts
+1. Requires seed data: Need clean subset for initial model
+2. Computational cost: Two-stage training
+3. Bias amplification risk: Model biases propagate to labels
+4. Domain expertise: Manual validation requires experts
 
 ## Future Work
 
-- **Active learning:** Identify most impactful corrections
-- **Uncertainty quantification:** Flag low-confidence corrections for review
-- **Iterative refinement:** Multiple correction rounds
-- **Cross-validation:** Use multiple seed models for ensemble correction
+- Active learning: Identify impactful corrections
+- Uncertainty quantification: Flag low-confidence corrections
+- Iterative refinement: Multiple correction rounds
+- Cross-validation: Multiple seed models for ensemble
 
 ## Citation
 

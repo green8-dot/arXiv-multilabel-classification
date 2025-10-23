@@ -1,5 +1,6 @@
 # arXiv Multi-Label Classification
-**Production-Grade Multi-Label Classifier for Computer Science Papers**
+
+Multi-label classifier for computer science papers.
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0-orange.svg)](https://pytorch.org/)
@@ -7,7 +8,7 @@
 
 ## Overview
 
-State-of-the-art multi-label classification system for arXiv computer science papers, achieving **94.26% average F1 score** across 8 categories using GraphSAGE + model-corrected labels.
+Multi-label classification for arXiv computer science papers. 94.26% average F1 across 8 categories. Uses GraphSAGE and model-corrected labels.
 
 ## Performance Metrics
 
@@ -23,13 +24,11 @@ State-of-the-art multi-label classification system for arXiv computer science pa
 | cs.SE (Software Engineering) | 98.58% | +25pp |
 | **Average** | **94.26%** | **+19pp** |
 
-*Target was 80%+ F1 - achieved 94.26% average*
+Target was 80% F1.
 
-## Key Innovation: Model-Corrected Labels
+## Model-Corrected Labels
 
-Traditional approach: Train on raw arXiv categories (contains 3.5% mislabeling)
-
-**Our approach:** Use high-quality model to correct training labels -> 15-25pp F1 improvement
+arXiv categories contain 3.5% mislabeling (author-declared, not validated). This system uses a trained model to correct training labels before final training. Result: 15-25pp F1 improvement over baseline.
 
 ## Architecture
 
@@ -113,43 +112,39 @@ arxiv-multilabel-classification/
 └── requirements.txt
 ```
 
-## Technical Highlights
+## Technical Details
 
 **Machine Learning:**
 - Multi-label classification with focal loss
 - Graph neural networks (GraphSAGE)
-- Transfer learning (SciBERT fine-tuning)
-- Mixed precision training (50% memory reduction)
+- SciBERT fine-tuning
+- Mixed precision training (fp16)
 - Model-corrected label generation
 
 **Engineering:**
-- Production-ready code
-- Comprehensive testing
-- Docker deployment ready
+- Docker deployment
 - REST API for inference
-- Batch processing support
+- Batch processing
 
-## Results Analysis
+## Results
 
-**What We Achieved:**
-- Exceeded 80% F1 target by +14pp
 - 8/8 categories above 85% F1
-- Model-corrected labels improved all categories
-- Production deployment ready
+- Average 94.26% F1 (target: 80%)
+- Model-corrected labels improved all categories by 15-25pp
 
-**Key Findings:**
-1. Model-corrected labels critical for noisy datasets
-2. Citation networks improve classification (+5-8pp)
-3. Focal loss handles class imbalance effectively
+**Findings:**
+1. Model-corrected labels improve noisy datasets
+2. Citation networks add 5-8pp improvement
+3. Focal loss reduces class imbalance issues
 4. SciBERT outperforms generic BERT by 12pp
 
 ## Applications
 
-This system demonstrates techniques applicable to:
+Techniques applicable to:
 - Scientific document classification
 - Multi-label text categorization
-- Knowledge graph + NLP integration
-- Production ML pipelines
+- Knowledge graph integration
+- Noisy label correction
 
 ## Future Work
 
@@ -188,7 +183,5 @@ OrbitScope Research - ML Engineering & Research
 - PyTorch + HuggingFace communities
 
 ---
-
-**Status:** Production-ready, fully tested, actively maintained
 
 **Last Updated:** 2025-10-22
