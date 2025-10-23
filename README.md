@@ -5,6 +5,9 @@ Multi-label classifier for computer science papers.
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0-orange.svg)](https://pytorch.org/)
 [![F1 Score](https://img.shields.io/badge/F1-94.26%25-brightgreen.svg)](https://github.com/green8-dot/arxiv-multilabel-classification)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-Transformers-orange)](https://huggingface.co/transformers/)
+[![arXiv](https://img.shields.io/badge/arXiv-Data-b31b1b.svg)](https://arxiv.org/)
 
 ## Overview
 
